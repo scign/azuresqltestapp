@@ -1,0 +1,31 @@
+export DATABASE_NAME=azuresqltest786
+export DATABASE_SERVER=azuresqltestserver786
+export AZURE_USER=azuresql
+export AZURE_PASSWORD=[enter your password]
+
+cd ~/education/data
+
+bcp "$DATABASE_NAME.dbo.courses" format nul -c -f courses.fmt -t, -S "$DATABASE_SERVER.database.windows.net" -U $AZURE_USER -P $AZURE_PASSWORD
+bcp "$DATABASE_NAME.dbo.courses" in courses.csv -f courses.fmt -S "$DATABASE_SERVER.database.windows.net" -U $AZURE_USER -P $AZURE_PASSWORD -F 2
+
+bcp "$DATABASE_NAME.dbo.modules" format nul -c -f modules.fmt -t, -S "$DATABASE_SERVER.database.windows.net" -U $AZURE_USER -P $AZURE_PASSWORD
+bcp "$DATABASE_NAME.dbo.modules" in modules.csv -f modules.fmt -S "$DATABASE_SERVER.database.windows.net" -U $AZURE_USER -P $AZURE_PASSWORD -F 2
+
+bcp "$DATABASE_NAME.dbo.studyplans" format nul -c -f studyplans.fmt -t, -S "$DATABASE_SERVER.database.windows.net" -U $AZURE_USER -P $AZURE_PASSWORD
+bcp "$DATABASE_NAME.dbo.studyplans" in studyplans.csv -f studyplans.fmt -S "$DATABASE_SERVER.database.windows.net" -U $AZURE_USER -P $AZURE_PASSWORD -F 2
+
+rm -r ~/education/data
+
+WEBAPPNAME=educationapp-$RANDOM
+
+# initial deployment
+az webapp up \
+    --resource-group learn-965abeef-e763-4dd3-bf72-0bb69715459f \
+    --location canadacentral \
+    --sku F1 \
+    --name $WEBAPPNAME
+
+# subsequent deployments
+az webapp up \
+    --resource-group learn-965abeef-e763-4dd3-bf72-0bb69715459f \
+    --name $WEBAPPNAME
